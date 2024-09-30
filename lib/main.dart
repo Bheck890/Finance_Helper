@@ -57,10 +57,6 @@ class _FinanceNavigationState extends State<FinanceNavigation> {
             label: 'Accounts',
           ),
           NavigationDestination(
-            icon: Badge(child: Icon(Icons.payment)),
-            label: 'Transactions',
-          ),
-          NavigationDestination(
             icon: Badge(child: Icon(Icons.settings),
             ),
             label: 'Settings',
@@ -68,13 +64,10 @@ class _FinanceNavigationState extends State<FinanceNavigation> {
         ],
       ),
       body: <Widget>[
-        /// Home page
+        /// Account page
         const Accounts(title: 'Add Accounts'),
 
-        /// Notifications page
-        const Transactions(title: 'Add Transactions'),
-
-        /// Messages page
+        /// Settings page
         const Settings(),
       ][currentPageIndex],
     );

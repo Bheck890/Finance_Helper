@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:finance_helper/models/breed.dart';
 import 'package:finance_helper/models/dog.dart';
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseService {
   // Singleton pattern

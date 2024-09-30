@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, unused_element
 
+import 'package:finance_helper/Pages/NewData/new_account.dart';
 import 'package:flutter/material.dart';
 
 class Accounts extends StatefulWidget {
@@ -33,9 +34,11 @@ class _AccountsState extends State<Accounts> {
   }
 
   void _AddAccount() {
-    setState(() {
-      _accountIndex++;
-    });
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const NewAccount()),
+    );
   }
 
   @override
@@ -53,23 +56,21 @@ class _AccountsState extends State<Accounts> {
                   subtitle: Text('This is a notification $_accountIndex'),
                   onTap: () {_OpenAccount();},
                 ),
-              ),
-              Card(
-                child: ListTile(
-                  //leading: const Icon(Icons.notifications_sharp),
-                  title: const Text('Account 2'),
-                  subtitle: const Text('This is a notification'),
-                  onTap: () {_OpenAccount();},
-                ),
-              ),
+              )
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: _AddAccount,
+          onPressed: () {
+            // ignore: avoid_print
+            print("Clicked");
+            Navigator.of(context).push(MaterialPageRoute( builder: (context) => const NewAccount()));
+          },
           tooltip: 'Add Account',
           child: const Icon(Icons.add),
       ),
     );
   }
+
+  
 }
