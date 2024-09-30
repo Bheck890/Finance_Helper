@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(const MyApp());
 
@@ -41,6 +42,11 @@ class NewAccountState extends State<NewAccount> {
   // not a GlobalKey<MyCustomFormState>.
   //final _formKey = GlobalKey<FormState>();
 
+  // Create a text controller and use it to retrieve the current value
+  // of the TextField.
+  final _nameText = TextEditingController();
+  final _ammountText = TextEditingController();
+
   late FocusNode myFocusNode;
 
   @override
@@ -67,38 +73,67 @@ class NewAccountState extends State<NewAccount> {
         title: const Text('New Account Data'),
         automaticallyImplyLeading: false,
       ),
+      
       body: Padding(
         padding: const EdgeInsets.all(16),
+        child: Center(
+
         child: Column(
+          
           children: [
             // The first text field is focused on as soon as the app starts.
-            const TextField(
-              autofocus: true,
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Account Name',
+            SizedBox(
+              width: 200,
+              height: 100,
+              child: TextField(
+              
+                maxLength: 20,
+                autofocus: true,
+                controller: _nameText,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Account Name',
+                  counterText: "",
+                ),
               ),
             ),
-            Container(
-                width: 50,
-                height: 20,
-                //color: Colors.red,
-              ),
             // The second text field is focused on when a user taps the
             // FloatingActionButton.
-            TextField(
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Starting Ammount',
-              ),
-              focusNode: myFocusNode,
+            
+            SizedBox(
+              width: 200,
+              height: 50,
               
+              child: TextField(
+                controller: _ammountText,
+                maxLength: 16,
+                // keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                ],  
+                //inputFormatters: [DecimalTextInputFormatter(decimalRange: 1)],
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Starting Ammount',
+                  prefix: Text(
+                    "\$",
+                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.rtl,
+                  ),
+                  prefixStyle: TextStyle(),
+                  counterText: "",
+                ),
+                focusNode: myFocusNode,
+
+              ),
             ),
 
-            Container(
-                width: 50,
-                height: 20,
-              ),
+            const SizedBox(
+              width: 200,
+              height: 50,
+            ),
+
 
             TextButton(
               //padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -108,23 +143,24 @@ class NewAccountState extends State<NewAccount> {
                 disabledForegroundColor: Colors.red.withOpacity(0.38),
               ),
               onPressed: () { 
+
+                String name = _nameText.text;
+                String ammount = _ammountText.text;
+                if(name.isEmpty || ammount.isEmpty)
+                {
+                  print("Invalid Input");
+                  return;
+                }
+
                 // ignore: avoid_print
-                print("Add account");
+                print("Add account ${name} - ${ammount}");
               },
               child: const Text('Create Account'),
             )
           ],
         ),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        // When the button is pressed,
-        // give focus to the text field using myFocusNode.
-        onPressed: () => {
-          myFocusNode.requestFocus()
-        },
-        tooltip: 'Focus Second Text Field',
-        child: const Icon(Icons.edit),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
