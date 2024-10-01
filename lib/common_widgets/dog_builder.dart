@@ -16,7 +16,7 @@ class DogBuilder extends StatelessWidget {
 
   Future<String> getBreedName(int id) async {
     final DatabaseService _databaseService = DatabaseService();
-    final breed = await _databaseService.breed(id);
+    final breed = await _databaseService.account(id);
     return breed.name;
   }
 

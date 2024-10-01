@@ -1,3 +1,5 @@
+import 'package:finance_helper/models/account.dart';
+import 'package:finance_helper/services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -32,6 +34,9 @@ class NewAccount extends StatefulWidget {
   }
 }
 
+
+
+
 // Create a corresponding State class.
 // This class holds data related to the form.
 class NewAccountState extends State<NewAccount> {
@@ -46,8 +51,22 @@ class NewAccountState extends State<NewAccount> {
   // of the TextField.
   final _nameText = TextEditingController();
   final _ammountText = TextEditingController();
+  final _descText = TextEditingController();
+  final DatabaseService _databaseService = DatabaseService();
 
   late FocusNode myFocusNode;
+
+
+  Future<void> _onSave() async {
+    final name = _nameText.text;
+    final ammount = _ammountText.text;
+
+    await _databaseService
+        .insertAccount(Account(name: name, description: ammount));
+
+    Navigator.pop(context);
+  }
+
 
   @override
   void initState() {
@@ -97,6 +116,24 @@ class NewAccountState extends State<NewAccount> {
                 ),
               ),
             ),
+
+            SizedBox(
+              width: 200,
+              height: 150,
+              child: TextField(
+                maxLines: 3,
+                maxLength: 20,
+                autofocus: true,
+                controller: _descText,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Account Description',
+                  counterText: "",
+                ),
+              ),
+            ),
+
+
             // The second text field is focused on when a user taps the
             // FloatingActionButton.
             
@@ -149,11 +186,16 @@ class NewAccountState extends State<NewAccount> {
                 if(name.isEmpty || ammount.isEmpty)
                 {
                   print("Invalid Input");
+                  //TODO: Add Invalid Message
+
                   return;
                 }
 
                 // ignore: avoid_print
                 print("Add account ${name} - ${ammount}");
+
+                _onSave();
+
               },
               child: const Text('Create Account'),
             )

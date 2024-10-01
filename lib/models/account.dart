@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-class Breed {
+class Account {
   final int? id;
   final String name;
   final String description;
 
-  Breed({
+  Account({
     this.id,
     required this.name,
     required this.description,
@@ -21,8 +21,8 @@ class Breed {
     };
   }
 
-  factory Breed.fromMap(Map<String, dynamic> map) {
-    return Breed(
+  factory Account.fromMap(Map<String, dynamic> map) {
+    return Account(
       id: map['id']?.toInt() ?? 0,
       name: map['name'] ?? '',
       description: map['description'] ?? '',
@@ -31,10 +31,10 @@ class Breed {
 
   String toJson() => json.encode(toMap());
 
-  factory Breed.fromJson(String source) => Breed.fromMap(json.decode(source));
+  factory Account.fromJson(String source) => Account.fromMap(json.decode(source));
 
   // Implement toString to make it easier to see information about
   // each breed when using the print statement.
   @override
-  String toString() => 'Breed(id: $id, name: $name, description: $description)';
+  String toString() => 'Account(id: $id, name: $name, description: $description)';
 }
