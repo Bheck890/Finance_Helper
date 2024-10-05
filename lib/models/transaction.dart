@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'dart:ffi';
 
-class Transaction {
+class Transact {
   final int? id;
   final String name;
   final String description;
-  final Double ammount;
+  final double ammount;
 
-  Transaction({
+  Transact({
     this.id,
     required this.name,
     required this.description,
@@ -25,8 +24,8 @@ class Transaction {
     };
   }
 
-  factory Transaction.fromMap(Map<String, dynamic> map) {
-    return Transaction(
+  factory Transact.fromMap(Map<String, dynamic> map) {
+    return Transact(
       id: map['id']?.toInt() ?? 0,
       name: map['name'] ?? '',
       description: map['description'] ?? '',
@@ -36,7 +35,7 @@ class Transaction {
 
   String toJson() => json.encode(toMap());
 
-  factory Transaction.fromJson(String source) => Transaction.fromMap(json.decode(source));
+  factory Transact.fromJson(String source) => Transact.fromMap(json.decode(source));
 
   // Implement toString to make it easier to see information about
   // each breed when using the print statement.

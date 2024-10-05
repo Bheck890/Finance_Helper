@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:finance_helper/models/account.dart';
+import 'package:finance_helper/models/transaction.dart';
 import 'package:finance_helper/services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() => runApp(const MyApp());
 
@@ -59,10 +63,20 @@ class NewAccountState extends State<NewAccount> {
 
   Future<void> _onSave() async {
     final name = _nameText.text;
+    final descript = _descText.text;
     final ammount = _ammountText.text;
+    double balance = 0.0;
+    
+    try {
+      balance = double.parse(ammount);
+    } catch (e) {
+        print('Invalid input string');
+    }
 
     await _databaseService
-        .insertAccount(Account(name: name, description: ammount));
+        .insertAccount(
+          Account(name: name, description: descript), 
+          Transact(name: "First Balance", description: "First Transaction", ammount: balance));
 
     Navigator.pop(context);
   }

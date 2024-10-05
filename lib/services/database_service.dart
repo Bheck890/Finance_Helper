@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:finance_helper/models/account.dart';
 import 'package:finance_helper/models/dog.dart';
+import 'package:finance_helper/models/transaction.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -61,14 +62,14 @@ class DatabaseService {
     await db.execute(
       'CREATE TABLE accounts(id INTEGER PRIMARY KEY, name TEXT, description TEXT)',
     );
-    // Run the CREATE {dogs} TABLE statement on the database.
-    await db.execute(
-      'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER, color INTEGER, breedId INTEGER, FOREIGN KEY (breedId) REFERENCES breeds(id) ON DELETE SET NULL)',
-    );
+    // // Run the CREATE {dogs} TABLE statement on the database.
+    // await db.execute(
+    //   'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER, color INTEGER, breedId INTEGER, FOREIGN KEY (breedId) REFERENCES breeds(id) ON DELETE SET NULL)',
+    // );
   }
 
   // Define a function that inserts breeds into the database
-  Future<void> insertAccount(Account accnt) async {
+  Future<void> insertAccount(Account accnt, Transact transact) async {
     // Get a reference to the database.
     final db = await _databaseService.database;
 
@@ -94,7 +95,7 @@ class DatabaseService {
     //Adds Transaction to the Table that was just made.
     await db.insert(
       accnt.name,
-      accnt.toMap(),
+      transact.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 

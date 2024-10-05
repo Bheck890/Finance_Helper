@@ -1,11 +1,17 @@
 // ignore_for_file: non_constant_identifier_names, unused_element
 
 import 'package:finance_helper/Pages/NewData/new_account.dart';
+import 'package:finance_helper/models/account.dart';
+import 'package:finance_helper/services/database_service.dart';
 import 'package:flutter/material.dart';
 
 class Accounts extends StatefulWidget {
-  const Accounts({super.key, required this.title});
+  const Accounts({super.key, required this.title, this.account});
   final String title;
+  final Account? account;
+  
+  get id => null;
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -27,10 +33,27 @@ class Accounts extends StatefulWidget {
 class _AccountsState extends State<Accounts> {
   int _accountIndex = 0;
 
+  final DatabaseService _databaseService = DatabaseService();
+
+  static final List<Accounts> _accounts = [];
+
+  int _selectedAge = 0;
+  int _selectedColor = 0;
+  int _selectedBreed = 0;
+
   void _OpenAccount() {
     setState(() {
       _accountIndex++;
     });
+  }
+
+  Future<List<Accounts>> _getAccounts() async {
+    final accounts = await _databaseService.accounts();
+    if (_accounts.length == 0) _accounts.addAll(accounts as Iterable<Accounts>);
+    if (widget.account != null) {
+      _selectedBreed = _accounts.indexWhere((e) => e.id == widget.account!.id);
+    }
+    return _accounts;
   }
 
   void _AddAccount() {
