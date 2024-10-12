@@ -1,28 +1,28 @@
+import 'package:finance_helper/models/account.dart';
 import 'package:flutter/material.dart';
-import 'package:finance_helper/models/dog.dart';
 import 'package:finance_helper/services/database_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class DogBuilder extends StatelessWidget {
-  const DogBuilder({
+class AccountBuilder extends StatelessWidget {
+  const AccountBuilder({
     Key? key,
     required this.future,
     required this.onEdit,
     required this.onDelete,
   }) : super(key: key);
-  final Future<List<Dog>> future;
-  final Function(Dog) onEdit;
-  final Function(Dog) onDelete;
+  final Future<List<Account>> future;
+  final Function(Account) onEdit;
+  final Function(Account) onDelete;
 
-  Future<String> getBreedName(int id) async {
+  Future<String> getAccountName(int id) async {
     final DatabaseService _databaseService = DatabaseService();
-    final breed = await _databaseService.account(id);
-    return breed.name;
+    final accnt = await _databaseService.account(id);
+    return accnt.name;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Dog>>(
+    return FutureBuilder<List<Account>>(
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -35,8 +35,8 @@ class DogBuilder extends StatelessWidget {
           child: ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              final dog = snapshot.data![index];
-              return _buildDogCard(dog, context);
+              final accnt = snapshot.data![index];
+              return _buildDogCard(accnt, context);
             },
           ),
         );
@@ -44,7 +44,7 @@ class DogBuilder extends StatelessWidget {
     );
   }
 
-  Widget _buildDogCard(Dog dog, BuildContext context) {
+  Widget _buildDogCard(Account accnt, BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -66,7 +66,7 @@ class DogBuilder extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    dog.name,
+                    accnt.name,
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.w500,
@@ -74,27 +74,15 @@ class DogBuilder extends StatelessWidget {
                   ),
                   SizedBox(height: 4.0),
                   FutureBuilder<String>(
-                    future: getBreedName(dog.breedId),
+                    future: getAccountName(accnt.id!),
                     builder: (context, snapshot) {
-                      return Text('Breed: ${snapshot.data}');
+                      return Text('Name: ${snapshot.data}');
                     },
                   ),
                   SizedBox(height: 4.0),
                   Row(
                     children: [
-                      Text('Age: ${dog.age.toString()}, Color: '),
-                      Container(
-                        height: 15.0,
-                        width: 15.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.0),
-                          color: dog.color,
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 1.5,
-                          ),
-                        ),
-                      ),
+                      Text('Description: ${accnt.description.toString()}, Color: '),
                     ],
                   ),
                 ],
@@ -102,7 +90,7 @@ class DogBuilder extends StatelessWidget {
             ),
             SizedBox(width: 20.0),
             GestureDetector(
-              onTap: () => onEdit(dog),
+              onTap: () => onEdit(accnt),
               child: Container(
                 height: 40.0,
                 width: 40.0,
@@ -116,7 +104,7 @@ class DogBuilder extends StatelessWidget {
             ),
             SizedBox(width: 20.0),
             GestureDetector(
-              onTap: () => onDelete(dog),
+              onTap: () => onDelete(accnt),
               child: Container(
                 height: 40.0,
                 width: 40.0,

@@ -98,7 +98,6 @@ class DatabaseService {
       transact.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-
   }
 
   Future<void> insertDog(Dog dog) async {
@@ -171,8 +170,8 @@ class DatabaseService {
     );
   }
 
-  Future<void> deleteDog(int id) async {
+  Future<void> deleteAccount(int id) async {
     final db = await _databaseService.database;
-    await db.delete('dogs', where: 'id = ?', whereArgs: [id]);
+    await db.delete('Account', where: 'id = ?', whereArgs: [id]);
   }
 }

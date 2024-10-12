@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, unused_element
 
 import 'package:finance_helper/Pages/NewData/new_account.dart';
+import 'package:finance_helper/common_widgets/account_builder.dart';
 import 'package:finance_helper/models/account.dart';
 import 'package:finance_helper/services/database_service.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +33,10 @@ class Accounts extends StatefulWidget {
 
 class _AccountsState extends State<Accounts> {
   int _accountIndex = 0;
-
   final DatabaseService _databaseService = DatabaseService();
 
-  static final List<Accounts> _accounts = [];
-
+  static final List<Account> _accounts = [];
+  
   int _selectedAge = 0;
   int _selectedColor = 0;
   int _selectedBreed = 0;
@@ -47,13 +47,30 @@ class _AccountsState extends State<Accounts> {
     });
   }
 
-  Future<List<Accounts>> _getAccounts() async {
+
+
+  Future<List<Account>> _getAccounts() async {
     final accounts = await _databaseService.accounts();
-    if (_accounts.length == 0) _accounts.addAll(accounts as Iterable<Accounts>);
+    if (_accounts.length == 0) 
+      _accounts.addAll(accounts as Iterable<Account>);
     if (widget.account != null) {
       _selectedBreed = _accounts.indexWhere((e) => e.id == widget.account!.id);
     }
     return _accounts;
+  }
+
+  Future<List<Map<String, dynamic>>> getData() async {
+    //final accounts = await _databaseService.accounts();
+    var dbClient = _databaseService;
+    // Add debugging here to ensure the query is executed
+  try {
+    List<Map<String, dynamic>> result = await db.query('items');
+    print('Fetched items: $result'); // Debugging
+    return result;
+  } catch (e) {
+    print('Error fetching items: $e'); // Debugging
+    return [];
+  }
   }
 
   void _AddAccount() {
@@ -66,33 +83,35 @@ class _AccountsState extends State<Accounts> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('ListTile Sample')),
-      body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Card(
-                child: ListTile(
-                  //leading: const Icon(Icons.notifications_sharp),
-                  title: const Text('Account 1'),
-                  subtitle: Text('This is a notification $_accountIndex'),
-                  onTap: () {_OpenAccount();},
-                ),
-              )
+    return FutureBuilder(
+      future: getData(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          List<Map<String, dynamic>> data = snapshot.data as List<Map<String, dynamic>>;
+          return DataTable(
+            columns: [
+              DataColumn(label: Text("ID")),
+              DataColumn(label: Text("Name")),
             ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // ignore: avoid_print
-            print("Clicked");
-            Navigator.of(context).push(MaterialPageRoute( builder: (context) => const NewAccount()));
-          },
-          tooltip: 'Add Account',
-          child: const Icon(Icons.add),
-      ),
+            rows: data
+                .map((e) => DataRow(cells: [
+                      DataCell(Text(e["id"].toString())),
+                      DataCell(Text(e["name"])),
+                    ]))
+                .toList(),
+          );
+        }
+      },
     );
+  }
+
+  Future<void> _onAccountDelete(Account dog) async {
+    await _databaseService.deleteAccount(dog.id!);
+    setState(() {});
   }
 
   
