@@ -61,16 +61,16 @@ class _AccountsState extends State<Accounts> {
 
   Future<List<Map<String, dynamic>>> getData() async {
     //final accounts = await _databaseService.accounts();
-    var dbClient = _databaseService;
+    var db = _databaseService;
     // Add debugging here to ensure the query is executed
-  try {
-    List<Map<String, dynamic>> result = await db.query('items');
-    print('Fetched items: $result'); // Debugging
-    return result;
-  } catch (e) {
-    print('Error fetching items: $e'); // Debugging
-    return [];
-  }
+    try {
+      List<Map<String, dynamic>> result = await db.query('items');
+      print('Fetched items: $result'); // Debugging
+      return result;
+    } catch (e) {
+      print('Error fetching items: $e'); // Debugging
+      return [];
+    }
   }
 
   void _AddAccount() {

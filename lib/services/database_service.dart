@@ -174,4 +174,5 @@ class DatabaseService {
     final db = await _databaseService.database;
     await db.delete('Account', where: 'id = ?', whereArgs: [id]);
   }
+
 }
