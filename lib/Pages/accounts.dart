@@ -39,7 +39,7 @@ class _AccountsState extends State<Accounts> {
   static final List<Account> _accounts = [];
 
   late Future<List<Map<String, dynamic>>> _items;
-
+  Map<int, int> itemCounts = {};  // Track counts for each item
   int _selectedAge = 0;
   int _selectedColor = 0;
   int _selectedBreed = 0;
@@ -82,7 +82,7 @@ class _AccountsState extends State<Accounts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Items List'),
+        title: Text('Accounts'),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
@@ -100,19 +100,58 @@ class _AccountsState extends State<Accounts> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            print('Error: ${snapshot.error}'); // Debugging
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No items found'));
           } else {
             final items = snapshot.data!;
-            print('Items loaded: $items'); // Debugging
             return ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
-                return ListTile(
-                  title: Text(item['name']),
+                int itemId = item['id'];  // Assuming your items have an 'id' field
+                int count = itemCounts[itemId] ?? 0;  // Use a map to track counts for each item
+
+                return Card(
+                  elevation: 3,
+                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: ListTile(
+                    title: Text(item['name']),
+                    subtitle: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (count > 0) {
+                                    itemCounts[itemId] = count - 1;
+                                  }
+                                });
+                              },
+                              child: Text('-'),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Text(
+                                '$count',  // Show the count in the middle
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  itemCounts[itemId] = count + 1;
+                                });
+                              },
+                              child: Text('+'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             );
