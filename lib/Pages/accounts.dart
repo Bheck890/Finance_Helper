@@ -2,9 +2,9 @@
 
 import 'package:finance_helper/Pages/NewData/new_account.dart';
 import 'package:finance_helper/models/account.dart';
+import 'package:finance_helper/common_widgets/account_card.dart';
 import 'package:finance_helper/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 
 class Accounts extends StatefulWidget {
@@ -33,20 +33,13 @@ class Accounts extends StatefulWidget {
 }
 
 class _AccountsState extends State<Accounts> {
-  int _accountIndex = 0;
   final DatabaseService _databaseService = DatabaseService();
 
-  static final List<Account> _accounts = [];
-
   late Future<List<Map<String, dynamic>>> _items;
-  Map<int, int> itemCounts = {};  // Track counts for each item
-  int _selectedAge = 0;
-  int _selectedColor = 0;
-  int _selectedBreed = 0;
+  Map<int, int> accountElements = {};  // Track counts for each item
 
   void _OpenAccount() {
     setState(() {
-      _accountIndex++;
       _fetchItems();
     });
   }
@@ -57,23 +50,13 @@ class _AccountsState extends State<Accounts> {
     _fetchItems();
   }
 
-
-  Future<List<Account>> _getAccounts() async {
-    final accounts = await _databaseService.accounts();
-    if (_accounts.length == 0) 
-      _accounts.addAll(accounts as Iterable<Account>);
-    if (widget.account != null) {
-      _selectedBreed = _accounts.indexWhere((e) => e.id == widget.account!.id);
-    }
-    return _accounts;
-  }
-
   Future<List<Map<String, dynamic>>> getItems(Database db) async {
     return await db.query('accounts');
   }
 
   void _fetchItems() {
     _items = _databaseService.accountsData();
+    // ignore: avoid_print
     print('Fetching items...'); // Debugging
   }
 
@@ -82,10 +65,10 @@ class _AccountsState extends State<Accounts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Accounts'),
+        title: const Text('Accounts'),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: () {
               setState(() {
                 _fetchItems();  // Manually trigger a refresh
@@ -98,11 +81,11 @@ class _AccountsState extends State<Accounts> {
         future: _items,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No items found'));
+            return const Center(child: Text('No items found'));
           } else {
             final items = snapshot.data!;
             return ListView.builder(
@@ -110,48 +93,24 @@ class _AccountsState extends State<Accounts> {
               itemBuilder: (context, index) {
                 final item = items[index];
                 int itemId = item['id'];  // Assuming your items have an 'id' field
-                int count = itemCounts[itemId] ?? 0;  // Use a map to track counts for each item
+                int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
 
-                return Card(
-                  elevation: 3,
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  child: ListTile(
-                    title: Text(item['name']),
-                    subtitle: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  if (count > 0) {
-                                    itemCounts[itemId] = count - 1;
-                                  }
-                                });
-                              },
-                              child: Text('-'),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Text(
-                                '$count',  // Show the count in the middle
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  itemCounts[itemId] = count + 1;
-                                });
-                              },
-                              child: Text('+'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                // Use the new ItemCard widget
+                return AccountCard(
+                  name: item['name'],  // Pass the item name
+                  count: count,        // Pass the count
+                  onIncrement: () {
+                    setState(() {
+                      accountElements[itemId] = count + 1;  // Increment the count
+                    });
+                  },
+                  onDecrement: () {
+                    setState(() {
+                      if (count > 0) {
+                        accountElements[itemId] = count - 1;  // Decrement the count
+                      }
+                    });
+                  },
                 );
               },
             );
@@ -179,7 +138,7 @@ class _AccountsState extends State<Accounts> {
           //   _fetchItems();
           // });
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
