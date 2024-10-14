@@ -121,6 +121,19 @@ class DatabaseService {
     return List.generate(maps.length, (index) => Account.fromMap(maps[index]));
   }
 
+  // A method that retrieves all the breeds from the breeds table.
+  Future<List<Map<String, dynamic>>> accountsData() async {
+    // Get a reference to the database.
+    final db = await _databaseService.database;
+
+    // Query the table for all the Breeds.
+    final List<Map<String, dynamic>> maps = await db.query('accounts');
+    return maps;
+    
+    // Convert the List<Map<String, dynamic> into a List<Breed>.
+    //List.generate(maps.length, (index) => Account.fromMap(maps[index]));
+  }
+
   Future<Account> account(int id) async {
     final db = await _databaseService.database;
     final List<Map<String, dynamic>> maps =

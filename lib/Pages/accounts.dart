@@ -1,9 +1,10 @@
 // ignore_for_file: non_constant_identifier_names, unused_element
 
 import 'package:finance_helper/Pages/NewData/new_account.dart';
-import 'package:finance_helper/common_widgets/account_builder.dart';
 import 'package:finance_helper/models/account.dart';
 import 'package:finance_helper/services/database_service.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 
 class Accounts extends StatefulWidget {
@@ -36,7 +37,9 @@ class _AccountsState extends State<Accounts> {
   final DatabaseService _databaseService = DatabaseService();
 
   static final List<Account> _accounts = [];
-  
+
+  late Future<List<Map<String, dynamic>>> _items;
+
   int _selectedAge = 0;
   int _selectedColor = 0;
   int _selectedBreed = 0;
@@ -44,9 +47,15 @@ class _AccountsState extends State<Accounts> {
   void _OpenAccount() {
     setState(() {
       _accountIndex++;
+      _fetchItems();
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _fetchItems();
+  }
 
 
   Future<List<Account>> _getAccounts() async {
@@ -59,53 +68,80 @@ class _AccountsState extends State<Accounts> {
     return _accounts;
   }
 
-  Future<List<Map<String, dynamic>>> getData() async {
-    //final accounts = await _databaseService.accounts();
-    var db = _databaseService;
-    // Add debugging here to ensure the query is executed
-    try {
-      List<Map<String, dynamic>> result = await db.query('items');
-      print('Fetched items: $result'); // Debugging
-      return result;
-    } catch (e) {
-      print('Error fetching items: $e'); // Debugging
-      return [];
-    }
+  Future<List<Map<String, dynamic>>> getItems(Database db) async {
+    return await db.query('accounts');
   }
 
-  void _AddAccount() {
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const NewAccount()),
-    );
+  void _fetchItems() {
+    _items = _databaseService.accountsData();
+    print('Fetching items...'); // Debugging
   }
+
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getData(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Items List'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                _fetchItems();  // Manually trigger a refresh
+              });
+            },
+          ),
+        ],
+      ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _items,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            print('Error: ${snapshot.error}'); // Debugging
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No items found'));
+          } else {
+            final items = snapshot.data!;
+            print('Items loaded: $items'); // Debugging
+            return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return ListTile(
+                  title: Text(item['name']),
+                );
+              },
+            );
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          print("Clicked");
+          // Push to another page and wait for the result
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const NewAccount()),
           );
-        } else {
-          List<Map<String, dynamic>> data = snapshot.data as List<Map<String, dynamic>>;
-          return DataTable(
-            columns: [
-              DataColumn(label: Text("ID")),
-              DataColumn(label: Text("Name")),
-            ],
-            rows: data
-                .map((e) => DataRow(cells: [
-                      DataCell(Text(e["id"].toString())),
-                      DataCell(Text(e["name"])),
-                    ]))
-                .toList(),
-          );
-        }
-      },
+
+          // Refresh the list after returning from the second page if needed
+          if (result == 'refresh') {
+            setState(() {
+              _fetchItems();
+            });
+          }
+          
+          //Navigator.of(context).push(MaterialPageRoute( builder: (context) => const NewAccount()));
+          // setState(() {
+          //   _fetchItems();
+          // });
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 

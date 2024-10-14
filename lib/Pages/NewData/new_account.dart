@@ -78,7 +78,7 @@ class NewAccountState extends State<NewAccount> {
           Account(name: name, description: descript), 
           Transact(name: "First Balance", description: "First Transaction", ammount: balance));
 
-    Navigator.pop(context);
+    Navigator.pop(context, "refresh");
   }
 
 
