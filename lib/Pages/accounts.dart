@@ -56,6 +56,9 @@ class _AccountsState extends State<Accounts> {
 
   void _fetchItems() {
     _items = _databaseService.accountsData();
+
+    
+
     // ignore: avoid_print
     print('Fetching items...'); // Debugging
   }
@@ -92,19 +95,20 @@ class _AccountsState extends State<Accounts> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
-                int itemId = item['id'];  // Assuming your items have an 'id' field
+                int itemId = item['id']; 
                 int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
 
                 // Use the new ItemCard widget
                 return AccountCard(
                   name: item['name'],  // Pass the item name
-                  count: count,        // Pass the count
-                  onIncrement: () {
+                  description: item['description'],
+                  total: count,        // Pass the count
+                  openEditAccount: () {
                     setState(() {
                       accountElements[itemId] = count + 1;  // Increment the count
                     });
                   },
-                  onDecrement: () {
+                  openTransactions: () {
                     setState(() {
                       if (count > 0) {
                         accountElements[itemId] = count - 1;  // Decrement the count
