@@ -96,6 +96,7 @@ class _AccountsState extends State<Accounts> {
               itemBuilder: (context, index) {
                 final item = items[index];
                 int itemId = item['id']; 
+                double ammount = item['ammount'];
                 int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
 // Use the Dismissible widget to wrap the ItemCard
                 return Dismissible(
@@ -113,7 +114,7 @@ class _AccountsState extends State<Accounts> {
                   child: AccountCard(
                     name: item['name'],  // Pass the item name
                     description: item['description'],
-                    total: count,        // Pass the count
+                    total: ammount,        // Pass the count
                     openEditAccount: () {
                       setState(() {
                         accountElements[itemId] = count + 1;  // Increment the count

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AccountCard extends StatelessWidget {
   final String name;
   final String description;
-  final int total;
+  final double total;
   final Function openEditAccount;
   final Function openTransactions;
 
