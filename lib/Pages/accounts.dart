@@ -97,25 +97,39 @@ class _AccountsState extends State<Accounts> {
                 final item = items[index];
                 int itemId = item['id']; 
                 int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
-
+// Use the Dismissible widget to wrap the ItemCard
+                return Dismissible(
+                  key: Key(itemId.toString()),  // A unique key for each item
+                  direction: DismissDirection.endToStart,  // Swipe to the left to delete
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Icon(Icons.delete, color: Colors.white),
+                  ),
+                  onDismissed: (direction) {
+                    _deleteItem(itemId);  // Call the delete function when swiped
+                  },
+                  child: AccountCard(
+                    name: item['name'],  // Pass the item name
+                    description: item['description'],
+                    total: count,        // Pass the count
+                    openEditAccount: () {
+                      setState(() {
+                        accountElements[itemId] = count + 1;  // Increment the count
+                      });
+                    },
+                    openTransactions: () {
+                      setState(() {
+                        if (count > 0) {
+                          accountElements[itemId] = count - 1;  // Decrement the count
+                        }
+                      });
+                    },
+                  )
+               );
                 // Use the new ItemCard widget
-                return AccountCard(
-                  name: item['name'],  // Pass the item name
-                  description: item['description'],
-                  total: count,        // Pass the count
-                  openEditAccount: () {
-                    setState(() {
-                      accountElements[itemId] = count + 1;  // Increment the count
-                    });
-                  },
-                  openTransactions: () {
-                    setState(() {
-                      if (count > 0) {
-                        accountElements[itemId] = count - 1;  // Decrement the count
-                      }
-                    });
-                  },
-                );
+                
               },
             );
           }
@@ -150,6 +164,14 @@ class _AccountsState extends State<Accounts> {
   Future<void> _onAccountDelete(Account dog) async {
     await _databaseService.deleteAccount(dog.id!);
     setState(() {});
+  }
+  
+  // Function to delete an item from the database
+  void _deleteItem(int id) async {
+    await _databaseService.deleteAccount(id);  // Make sure you have a deleteItem method
+    setState(() {
+      _fetchItems();  // Refresh the item list after deletion
+    });
   }
 
   

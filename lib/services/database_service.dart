@@ -60,7 +60,7 @@ class DatabaseService {
   Future<void> _onCreate(Database db, int version) async {
     // Run the CREATE {breeds} TABLE statement on the database.
     await db.execute(
-      'CREATE TABLE accounts(id INTEGER PRIMARY KEY, name TEXT, description TEXT)',
+      'CREATE TABLE accounts(id INTEGER PRIMARY KEY, name TEXT, description TEXT, ammount DOUBLE)',
     );
     // // Run the CREATE {dogs} TABLE statement on the database.
     // await db.execute(
@@ -89,7 +89,7 @@ class DatabaseService {
 
     //Creates Table with name of User made Account
     await db.execute(
-      'CREATE TABLE ${accnt.name}(id INTEGER PRIMARY KEY, name TEXT, description TEXT, ammount DECEMIMAL)',
+      'CREATE TABLE ${accnt.name}(id INTEGER PRIMARY KEY, name TEXT, description TEXT, ammount DOUBLE)',
     );
 
     //Adds Transaction to the Table that was just made.
@@ -188,7 +188,7 @@ class DatabaseService {
 
   Future<void> deleteAccount(int id) async {
     final db = await _databaseService.database;
-    await db.delete('Account', where: 'id = ?', whereArgs: [id]);
+    await db.delete('accounts', where: 'id = ?', whereArgs: [id]);
   }
 
 }

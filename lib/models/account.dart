@@ -4,11 +4,13 @@ class Account {
   final int? id;
   final String name;
   final String description;
+  final double ammount;
 
   Account({
     this.id,
     required this.name,
     required this.description,
+    required this.ammount
   });
 
   // Convert a Breed into a Map. The keys must correspond to the names of the
@@ -18,6 +20,7 @@ class Account {
       'id': id,
       'name': name,
       'description': description,
+      'ammount': ammount,
     };
   }
 
@@ -26,6 +29,7 @@ class Account {
       id: map['id']?.toInt() ?? 0,
       name: map['name'] ?? '',
       description: map['description'] ?? '',
+      ammount: map['ammount'] ?? 0
     );
   }
 
