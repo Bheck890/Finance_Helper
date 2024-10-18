@@ -5,7 +5,6 @@ import 'package:finance_helper/models/transaction.dart';
 import 'package:finance_helper/services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() => runApp(const MyApp());
 
@@ -22,7 +21,12 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text(appTitle),
         ),
-        body: const NewAccount(),
+        body: const NewAccount(
+          name: "",
+          description: "",
+          total: "",
+          id: 0,
+        ),
       ),
     );
   }
@@ -30,20 +34,49 @@ class MyApp extends StatelessWidget {
 
 // Create a Form widget.
 class NewAccount extends StatefulWidget {
-  const NewAccount({super.key});
+  final String name;
+  final String description;
+  final String total;
+  final int id;
+
+  const NewAccount({
+    super.key,
+    required this.name,
+    required this.description,
+    required this.total,
+    required this.id,
+  });
+  
+  //const NewAccount({super.key});
 
   @override
   NewAccountState createState() {
-    return NewAccountState();
+    // ignore: no_logic_in_create_state
+    return NewAccountState(
+      name: name,
+      description: description,
+      total: total,
+      id: id,
+    );
   }
 }
-
-
-
 
 // Create a corresponding State class.
 // This class holds data related to the form.
 class NewAccountState extends State<NewAccount> {
+  final String name;
+  final String description;
+  final String total;
+  final int id;
+
+  NewAccountState({
+    required this.name,
+    required this.description,
+    required this.total,
+    required this.id,
+  });
+  
+
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
@@ -58,6 +91,7 @@ class NewAccountState extends State<NewAccount> {
   final _descText = TextEditingController();
   final DatabaseService _databaseService = DatabaseService();
 
+  
   late FocusNode myFocusNode;
 
 
@@ -83,6 +117,26 @@ class NewAccountState extends State<NewAccount> {
     Navigator.pop(context, "refresh");
   }
 
+  Future<void> _editSave() async {
+    final name = _nameText.text;
+    final descript = _descText.text;
+
+    //final ammount = _ammountText.text;
+    // double balance = 0.0;
+    
+    // try {
+    //   balance = double.parse(ammount);
+    // } catch (e) {
+    //     print('Invalid input string');
+    // }
+
+    // var number = double.parse(ammount);
+
+    await _databaseService.updateAccount(id, name, descript);
+
+    Navigator.pop(context, "refresh");
+  }
+
 
   @override
   void initState() {
@@ -102,10 +156,17 @@ class NewAccountState extends State<NewAccount> {
 
   @override
   Widget build(BuildContext context) {
+
+    final bool _newMode = name.isEmpty;
+
+    _nameText.text = name;
+    _ammountText.text = total;
+    _descText.text = description;
+
     // Build a Form widget using the _formKey created above.
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Account Data'),
+        title: _newMode ? const Text('New Account Data') : const Text('Update Account Data'),
         automaticallyImplyLeading: false,
       ),
       
@@ -153,6 +214,7 @@ class NewAccountState extends State<NewAccount> {
             // The second text field is focused on when a user taps the
             // FloatingActionButton.
             
+            _newMode ? 
             SizedBox(
               width: 200,
               height: 50,
@@ -180,6 +242,11 @@ class NewAccountState extends State<NewAccount> {
                 focusNode: myFocusNode,
 
               ),
+            )
+            :
+            const SizedBox(
+              width: 200,
+              height: 50,
             ),
 
             const SizedBox(
@@ -210,10 +277,13 @@ class NewAccountState extends State<NewAccount> {
                 // ignore: avoid_print
                 print("Add account ${name} - ${ammount}");
 
-                _onSave();
-
+                if(_newMode) {
+                  _onSave();
+                } else {
+                  _editSave();
+                }
               },
-              child: const Text('Create Account'),
+              child: _newMode ? const Text('Create Account') : const Text('Update Account'),
             )
           ],
         ),
@@ -221,4 +291,6 @@ class NewAccountState extends State<NewAccount> {
       ),
     );
   }
+  
+  
 }

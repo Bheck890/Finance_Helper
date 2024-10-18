@@ -96,9 +96,12 @@ class _AccountsState extends State<Accounts> {
               itemBuilder: (context, index) {
                 final item = items[index];
                 int itemId = item['id']; 
+                String accountName = item['name'];
+                String description = item['description'];
                 double ammount = item['ammount'];
                 int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
-// Use the Dismissible widget to wrap the ItemCard
+                
+                // Use the Dismissible widget to wrap the ItemCard
                 return Dismissible(
                   key: Key(itemId.toString()),  // A unique key for each item
                   direction: DismissDirection.endToStart,  // Swipe to the left to delete
@@ -112,13 +115,28 @@ class _AccountsState extends State<Accounts> {
                     _deleteItem(itemId);  // Call the delete function when swiped
                   },
                   child: AccountCard(
-                    name: item['name'],  // Pass the item name
-                    description: item['description'],
+                    name: accountName,  // Pass the item name
+                    description: description,
                     total: ammount,        // Pass the count
-                    openEditAccount: () {
-                      setState(() {
-                        accountElements[itemId] = count + 1;  // Increment the count
-                      });
+                    openEditAccount: () async {
+                      print("Clicked");
+                      // Push to another page and wait for the result
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NewAccount(
+                          name: accountName,
+                          description: description,
+                          total: "$ammount",
+                          id: itemId,
+                          )),
+                      );
+
+                      // Refresh the list after returning from the second page if needed
+                      if (result == 'refresh') {
+                        setState(() {
+                          _fetchItems();
+                        });
+                      }
                     },
                     openTransactions: () {
                       setState(() {
@@ -142,7 +160,11 @@ class _AccountsState extends State<Accounts> {
           // Push to another page and wait for the result
           final result = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const NewAccount()),
+            MaterialPageRoute(builder: (context) => const NewAccount(
+              name: "",
+              description: "",
+              total: "",
+              id: 0)),
           );
 
           // Refresh the list after returning from the second page if needed

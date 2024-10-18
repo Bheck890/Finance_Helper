@@ -73,8 +73,6 @@ class DatabaseService {
     // Get a reference to the database.
     final db = await _databaseService.database;
 
-    
-
     // Insert the Breed into the correct table. You might also specify the
     // `conflictAlgorithm` to use in case the same breed is inserted twice.
     //
@@ -97,6 +95,23 @@ class DatabaseService {
       accnt.name,
       transact.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<int> updateAccount(int id, String newName, String newDescription) async {
+    final db = await _databaseService.database;
+
+    Map<String, dynamic> newValues = {
+      'name': newName,
+      'description': newDescription,
+    };
+
+    // Update the row and return the number of affected rows
+    return await db.update(
+      'accounts',
+      newValues,
+      where: 'id = ?', // Specify the column for the condition
+      whereArgs: [id], // Provide the actual value for the condition
     );
   }
 
