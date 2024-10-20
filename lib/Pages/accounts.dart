@@ -1,6 +1,9 @@
 // ignore_for_file: non_constant_identifier_names, unused_element
 
+import 'package:finance_helper/Pages/Controllers/nav_test.dart';
+import 'package:finance_helper/Pages/Controllers/transaction_layout.dart';
 import 'package:finance_helper/Pages/NewData/new_account.dart';
+import 'package:finance_helper/Pages/transactions.dart';
 import 'package:finance_helper/models/account.dart';
 import 'package:finance_helper/common_widgets/account_card.dart';
 import 'package:finance_helper/services/database_service.dart';
@@ -56,9 +59,6 @@ class _AccountsState extends State<Accounts> {
 
   void _fetchItems() {
     _items = _databaseService.accountsData();
-
-    
-
     // ignore: avoid_print
     print('Fetching items...'); // Debugging
   }
@@ -119,7 +119,7 @@ class _AccountsState extends State<Accounts> {
                     description: description,
                     total: ammount,        // Pass the count
                     openEditAccount: () async {
-                      print("Clicked");
+                      print("Clicked Edit Account $accountName");
                       // Push to another page and wait for the result
                       final result = await Navigator.push(
                         context,
@@ -139,11 +139,25 @@ class _AccountsState extends State<Accounts> {
                       }
                     },
                     openTransactions: () {
-                      setState(() {
-                        if (count > 0) {
-                          accountElements[itemId] = count - 1;  // Decrement the count
-                        }
-                      });
+
+                      print("Opened Transacction Page $itemId");
+                      
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => Transactions(title: 'Transaction')));
+                      
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => ThirdScreen()),
+                      // );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TransactionsNavigation(
+                          name: accountName,
+                          id: itemId,
+                          )),
+                      );                      
                     },
                   )
                );

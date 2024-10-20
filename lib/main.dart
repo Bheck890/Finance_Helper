@@ -1,6 +1,5 @@
 import 'package:finance_helper/Pages/accounts.dart';
-import 'package:finance_helper/Pages/settings.dart';
-import 'package:finance_helper/Pages/transactions.dart';
+import 'package:finance_helper/Pages/account_settings.dart';
 import 'package:flutter/material.dart';
 
 void main() {

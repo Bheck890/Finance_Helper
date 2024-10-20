@@ -26,18 +26,6 @@ class Transactions extends StatefulWidget {
 class _TransactionsState extends State<Transactions> {
   int _transactionIndex = 0;
 
-  void _OpenTransaction() {
-    setState(() {
-      _transactionIndex++;
-    });
-  }
-
-  void _AddTransaction() {
-    setState(() {
-      _transactionIndex++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +39,9 @@ class _TransactionsState extends State<Transactions> {
                   //leading: const Icon(Icons.notifications_sharp),
                   title: const Text('Transaction 1'),
                   subtitle: Text('This is a notification $_transactionIndex'),
-                  onTap: () {_OpenTransaction();},
+                  onTap: () {
+                    print("Open");
+                    },
                 ),
               ),
               Card(
@@ -59,14 +49,18 @@ class _TransactionsState extends State<Transactions> {
                   //leading: const Icon(Icons.notifications_sharp),
                   title: const Text('Transaction 2'),
                   subtitle: const Text('This is a notification'),
-                  onTap: () {_OpenTransaction();},
+                  onTap: () {
+                    print("Close");
+                    },
                 ),
               ),
             ],
           ),
         ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _AddTransaction,
+        onPressed: () {
+          print("Hello");
+        },
         tooltip: 'Add Transaction',
         child: const Icon(Icons.add),
       ),
