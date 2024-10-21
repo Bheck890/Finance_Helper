@@ -1,17 +1,14 @@
 // ignore_for_file: non_constant_identifier_names, unused_element
-
-import 'package:finance_helper/Pages/Controllers/nav_test.dart';
 import 'package:finance_helper/Pages/Controllers/transaction_layout.dart';
 import 'package:finance_helper/Pages/NewData/new_account.dart';
-import 'package:finance_helper/Pages/transactions.dart';
 import 'package:finance_helper/models/account.dart';
 import 'package:finance_helper/common_widgets/account_card.dart';
 import 'package:finance_helper/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/material.dart';
 
-class Accounts extends StatefulWidget {
-  const Accounts({super.key, required this.title, this.account});
+class AccountsView extends StatefulWidget {
+  const AccountsView({super.key, required this.title, this.account});
   final String title;
   final Account? account;
   
@@ -32,10 +29,10 @@ class Accounts extends StatefulWidget {
   }
   
   @override
-  State<StatefulWidget> createState() => _AccountsState();
+  State<StatefulWidget> createState() => _AccountsViewState();
 }
 
-class _AccountsState extends State<Accounts> {
+class _AccountsViewState extends State<AccountsView> {
   final DatabaseService _databaseService = DatabaseService();
 
   late Future<List<Map<String, dynamic>>> _items;
@@ -99,6 +96,7 @@ class _AccountsState extends State<Accounts> {
                 String accountName = item['name'];
                 String description = item['description'];
                 double ammount = item['ammount'];
+                String accountID = item['tableID'];
                 int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
                 
                 // Use the Dismissible widget to wrap the ItemCard
@@ -128,6 +126,7 @@ class _AccountsState extends State<Accounts> {
                           description: description,
                           total: "$ammount",
                           id: itemId,
+                          tableCode: accountID,
                           )),
                       );
 
@@ -142,19 +141,10 @@ class _AccountsState extends State<Accounts> {
 
                       print("Opened Transacction Page $itemId");
                       
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => Transactions(title: 'Transaction')));
-                      
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => ThirdScreen()),
-                      // );
-
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => TransactionsNavigation(
-                          name: accountName,
+                          name: accountID,
                           id: itemId,
                           )),
                       );                      
@@ -170,7 +160,8 @@ class _AccountsState extends State<Accounts> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          print("Clicked");
+
+          print("New Account Clicked");
           // Push to another page and wait for the result
           final result = await Navigator.push(
             context,
@@ -178,7 +169,8 @@ class _AccountsState extends State<Accounts> {
               name: "",
               description: "",
               total: "",
-              id: 0)),
+              id: 0,
+              tableCode: "")),
           );
 
           // Refresh the list after returning from the second page if needed

@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
           description: "",
           total: "",
           id: 0,
+          tableName: "",
         ),
       ),
     );
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
 
 // Create a Form widget.
 class NewTransaction extends StatefulWidget {
+  final String tableName;
   final String name;
   final String description;
   final String total;
@@ -45,6 +47,7 @@ class NewTransaction extends StatefulWidget {
     required this.description,
     required this.total,
     required this.id,
+    required this.tableName
   });
   
   //const NewAccount({super.key});
@@ -56,7 +59,8 @@ class NewTransaction extends StatefulWidget {
       name: name,
       description: description,
       total: total,
-      id: id,
+      id: id, 
+      tableName: tableName,
     );
   }
 }
@@ -68,12 +72,14 @@ class NewTransactionState extends State<NewTransaction> {
   final String description;
   final String total;
   final int id;
+  final String tableName;
 
   NewTransactionState({
     required this.name,
     required this.description,
     required this.total,
     required this.id,
+    required this.tableName
   });
   
 
@@ -110,9 +116,9 @@ class NewTransactionState extends State<NewTransaction> {
     var number = double.parse(ammount);
 
     await _databaseService
-        .insertAccount(
-          Account(name: name, description: descript, ammount: number), 
-          Transact(name: "First Balance", description: "First Transaction", ammount: balance));
+        .insertTransact(
+          Transact(name: "First Balance", description: "First Transaction", ammount: balance), table: tableName
+          );
 
     Navigator.pop(context, "refresh");
   }

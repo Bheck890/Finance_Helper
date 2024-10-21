@@ -1,4 +1,4 @@
-import 'package:finance_helper/Pages/accounts.dart';
+import 'package:finance_helper/Pages/accounts_view.dart';
 import 'package:finance_helper/Pages/account_settings.dart';
 import 'package:flutter/material.dart';
 
@@ -64,7 +64,7 @@ class _FinanceNavigationState extends State<FinanceNavigation> {
       ),
       body: <Widget>[
         /// Account page
-        const Accounts(title: 'Add Accounts'),
+        const AccountsView(title: 'Add Accounts'),
 
         /// Settings page
         const Settings(),

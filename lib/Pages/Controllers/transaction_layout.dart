@@ -1,5 +1,5 @@
 import 'package:finance_helper/Pages/account_settings.dart';
-import 'package:finance_helper/Pages/transactions.dart';
+import 'package:finance_helper/Pages/transaction_view.dart';
 import 'package:flutter/material.dart';
 
 class TransactionsNavigation extends StatefulWidget {
@@ -14,17 +14,17 @@ class TransactionsNavigation extends StatefulWidget {
 
   @override
   State<TransactionsNavigation> createState() => _TransactionsNavigationState(
-    name: name,
-    id: id);
+    accountName: name,
+    accountId: id);
 }
 
 class _TransactionsNavigationState extends State<TransactionsNavigation> {
-  final String name;
-  final int id;
+  final String accountName;
+  final int accountId;
 
   _TransactionsNavigationState({
-    required this.name,
-    required this.id,
+    required this.accountName,
+    required this.accountId,
   });
   
   int currentPageIndex = 0;
@@ -32,7 +32,7 @@ class _TransactionsNavigationState extends State<TransactionsNavigation> {
   @override
   Widget build(BuildContext context) {
     //final ThemeData theme = Theme.of(context);
-    print("Opened Transacction For $id");
+    print("Opened Transacction For $accountId");
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -47,11 +47,11 @@ class _TransactionsNavigationState extends State<TransactionsNavigation> {
             icon: Icon(Icons.account_box),
             label: 'Transactions',
           ),
-          // NavigationDestination(
-          //   icon: Badge(child: Icon(Icons.settings),
-          //   ),
-          //   label: 'Stats',
-          // ),
+          NavigationDestination(
+            icon: Badge(child: Icon(Icons.settings),
+            ),
+            label: 'Stats',
+          ),
           NavigationDestination(
             icon: Badge(child: Icon(Icons.settings),
             ),
@@ -61,8 +61,12 @@ class _TransactionsNavigationState extends State<TransactionsNavigation> {
       ),
       body: <Widget>[
         /// Account page
-        const Transactions(title: 'Transactions'),
-        //const Settings(),
+        TransactionView(
+          accountName: accountName,
+          accountID: accountId,
+        ),
+
+        const Settings(),
         /// Settings page
         const Settings(),
       ][currentPageIndex],

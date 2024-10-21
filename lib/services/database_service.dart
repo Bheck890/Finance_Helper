@@ -60,7 +60,7 @@ class DatabaseService {
   Future<void> _onCreate(Database db, int version) async {
     // Run the CREATE {breeds} TABLE statement on the database.
     await db.execute(
-      'CREATE TABLE accounts(id INTEGER PRIMARY KEY, name TEXT, description TEXT, ammount DOUBLE)',
+      'CREATE TABLE accounts(id INTEGER PRIMARY KEY, tableID TEXT, name TEXT, description TEXT, ammount DOUBLE)',
     );
     // // Run the CREATE {dogs} TABLE statement on the database.
     // await db.execute(
@@ -78,6 +78,11 @@ class DatabaseService {
     //
     // In this case, replace any previous data.
 
+    //Creates Table with name of User made Account
+    await db.execute(
+      'CREATE TABLE ${accnt.tableID} (id INTEGER PRIMARY KEY, name TEXT, description TEXT, ammount DOUBLE)',
+    );
+
     //Adds Account to a main Data Table
     await db.insert(
       'accounts',
@@ -85,14 +90,9 @@ class DatabaseService {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
-    //Creates Table with name of User made Account
-    await db.execute(
-      'CREATE TABLE ${accnt.name}(id INTEGER PRIMARY KEY, name TEXT, description TEXT, ammount DOUBLE)',
-    );
-
     //Adds Transaction to the Table that was just made.
     await db.insert(
-      accnt.name,
+      accnt.tableID,
       transact.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -115,11 +115,15 @@ class DatabaseService {
     );
   }
 
-  Future<void> insertDog(Dog dog) async {
+// Define a function that inserts breeds into the database
+  Future<void> insertTransact(Transact transact, {required String table}) async {
+    // Get a reference to the database.
     final db = await _databaseService.database;
+
+    //Adds a Transaction to the Table.
     await db.insert(
-      'dogs',
-      dog.toMap(),
+      table,
+      transact.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -136,7 +140,7 @@ class DatabaseService {
     return List.generate(maps.length, (index) => Account.fromMap(maps[index]));
   }
 
-  // A method that retrieves all the breeds from the breeds table.
+  // A method that retrieves all the Accoubts from the Account table.
   Future<List<Map<String, dynamic>>> accountsData() async {
     // Get a reference to the database.
     final db = await _databaseService.database;
@@ -144,13 +148,20 @@ class DatabaseService {
     // Query the table for all the Breeds.
     final List<Map<String, dynamic>> maps = await db.query('accounts');
 
-    
+    return maps;
+  }
+
+  // A method that retrieves all the Transactions from the Account table.
+  Future<List<Map<String, dynamic>>> transactData(String account) async {
+    // Get a reference to the database.
+    final db = await _databaseService.database;
+
+    // Query the table for all the Breeds.
+    final List<Map<String, dynamic>> maps = await db.query(account);
 
     return maps;
-    
-    // Convert the List<Map<String, dynamic> into a List<Breed>.
-    //List.generate(maps.length, (index) => Account.fromMap(maps[index]));
   }
+
 
   Future<Account> account(int id) async {
     final db = await _databaseService.database;
@@ -158,6 +169,7 @@ class DatabaseService {
         await db.query('accounts', where: 'id = ?', whereArgs: [id]);
     return Account.fromMap(maps[0]);
   }
+
 
   Future<List<Dog>> dogs() async {
     final db = await _databaseService.database;
@@ -181,19 +193,14 @@ class DatabaseService {
     );
   }
 
-  Future<void> updateDog(Dog dog) async {
-    final db = await _databaseService.database;
-    await db.update('dogs', dog.toMap(), where: 'id = ?', whereArgs: [dog.id]);
-  }
-
   // A method that deletes a breed data from the breeds table.
-  Future<void> deleteBreed(int id) async {
+  Future<void> deleteTransaction(String account, int id) async {
     // Get a reference to the database.
     final db = await _databaseService.database;
 
     // Remove the Breed from the database.
     await db.delete(
-      'accounts',
+      'account',
       // Use a `where` clause to delete a specific breed.
       where: 'id = ?',
       // Pass the Breed's id as a whereArg to prevent SQL injection.

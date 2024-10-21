@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:math';
+
 import 'package:finance_helper/models/account.dart';
 import 'package:finance_helper/models/transaction.dart';
 import 'package:finance_helper/services/database_service.dart';
@@ -26,6 +28,7 @@ class MyApp extends StatelessWidget {
           description: "",
           total: "",
           id: 0,
+          tableCode: "",
         ),
       ),
     );
@@ -38,6 +41,7 @@ class NewAccount extends StatefulWidget {
   final String description;
   final String total;
   final int id;
+  final String tableCode;
 
   const NewAccount({
     super.key,
@@ -45,6 +49,7 @@ class NewAccount extends StatefulWidget {
     required this.description,
     required this.total,
     required this.id,
+    required this.tableCode,
   });
   
   //const NewAccount({super.key});
@@ -57,6 +62,7 @@ class NewAccount extends StatefulWidget {
       description: description,
       total: total,
       id: id,
+      tableCode: tableCode,
     );
   }
 }
@@ -68,12 +74,14 @@ class NewAccountState extends State<NewAccount> {
   final String description;
   final String total;
   final int id;
+  final String tableCode;
 
   NewAccountState({
     required this.name,
     required this.description,
     required this.total,
     required this.id,
+    required this.tableCode,
   });
   
 
@@ -94,8 +102,15 @@ class NewAccountState extends State<NewAccount> {
   
   late FocusNode myFocusNode;
 
+  String generateHexCode() {
+    final random = Random();
+    final int randomValue = random.nextInt(0xFFFFFF);  // Generates a random value up to FFFFFF
+    return randomValue.toRadixString(16).padLeft(8, '0').toUpperCase();
+  }
 
-  Future<void> _onSave() async {
+
+  Future<void> _newSave() async {
+    final hex = 'G${generateHexCode()}';
     final name = _nameText.text;
     final descript = _descText.text;
     final ammount = _ammountText.text;
@@ -111,8 +126,9 @@ class NewAccountState extends State<NewAccount> {
 
     await _databaseService
         .insertAccount(
-          Account(name: name, description: descript, ammount: number), 
-          Transact(name: "First Balance", description: "First Transaction", ammount: balance));
+          Account(name: name, tableID: hex, description: descript, ammount: number), 
+          Transact(name: "First Balance", description: "First Transaction", ammount: balance)
+          );
 
     Navigator.pop(context, "refresh");
   }
@@ -120,17 +136,6 @@ class NewAccountState extends State<NewAccount> {
   Future<void> _editSave() async {
     final name = _nameText.text;
     final descript = _descText.text;
-
-    //final ammount = _ammountText.text;
-    // double balance = 0.0;
-    
-    // try {
-    //   balance = double.parse(ammount);
-    // } catch (e) {
-    //     print('Invalid input string');
-    // }
-
-    // var number = double.parse(ammount);
 
     await _databaseService.updateAccount(id, name, descript);
 
@@ -278,7 +283,7 @@ class NewAccountState extends State<NewAccount> {
                 print("Add account ${name} - ${ammount}");
 
                 if(_newMode) {
-                  _onSave();
+                  _newSave();
                 } else {
                   _editSave();
                 }
