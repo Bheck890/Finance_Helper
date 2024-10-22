@@ -115,6 +115,24 @@ class DatabaseService {
     );
   }
 
+  Future<int> updateTransact(int id, String newName, String newDescription, double ammount, String table) async {
+    final db = await _databaseService.database;
+
+    Map<String, dynamic> newValues = {
+      'name': newName,
+      'description': newDescription,
+      'ammount': ammount,
+    };
+
+    // Update the row and return the number of affected rows
+    return await db.update(
+      table,
+      newValues,
+      where: 'id = ?', // Specify the column for the condition
+      whereArgs: [id], // Provide the actual value for the condition
+    );
+  }
+
 // Define a function that inserts breeds into the database
   Future<void> insertTransact(Transact transact, {required String table}) async {
     // Get a reference to the database.
@@ -194,13 +212,13 @@ class DatabaseService {
   }
 
   // A method that deletes a breed data from the breeds table.
-  Future<void> deleteTransaction(String account, int id) async {
+  Future<void> deleteTransaction(String accountID, int id) async {
     // Get a reference to the database.
     final db = await _databaseService.database;
 
     // Remove the Breed from the database.
     await db.delete(
-      'account',
+      accountID,
       // Use a `where` clause to delete a specific breed.
       where: 'id = ?',
       // Pass the Breed's id as a whereArg to prevent SQL injection.

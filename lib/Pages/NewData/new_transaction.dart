@@ -60,7 +60,7 @@ class NewTransaction extends StatefulWidget {
       description: description,
       total: total,
       id: id, 
-      tableName: tableName,
+      accountID: tableName,
     );
   }
 }
@@ -72,14 +72,14 @@ class NewTransactionState extends State<NewTransaction> {
   final String description;
   final String total;
   final int id;
-  final String tableName;
+  final String accountID;
 
   NewTransactionState({
     required this.name,
     required this.description,
     required this.total,
     required this.id,
-    required this.tableName
+    required this.accountID
   });
   
 
@@ -101,9 +101,9 @@ class NewTransactionState extends State<NewTransaction> {
   late FocusNode myFocusNode;
 
 
-  Future<void> _onSave() async {
-    final name = _nameText.text;
-    final descript = _descText.text;
+  Future<void> _newSave() async {
+    final transactName = _nameText.text;
+    final transactDescript = _descText.text;
     final ammount = _ammountText.text;
     double balance = 0.0;
     
@@ -113,11 +113,11 @@ class NewTransactionState extends State<NewTransaction> {
         print('Invalid input string');
     }
 
-    var number = double.parse(ammount);
+    //var number = double.parse(ammount);
 
     await _databaseService
         .insertTransact(
-          Transact(name: "First Balance", description: "First Transaction", ammount: balance), table: tableName
+          Transact(name: transactName, description: transactDescript, ammount: balance), table: accountID
           );
 
     Navigator.pop(context, "refresh");
@@ -127,18 +127,18 @@ class NewTransactionState extends State<NewTransaction> {
     final name = _nameText.text;
     final descript = _descText.text;
 
-    //final ammount = _ammountText.text;
-    // double balance = 0.0;
+    final ammount = _ammountText.text;
+    double balance = 0.0;
     
-    // try {
-    //   balance = double.parse(ammount);
-    // } catch (e) {
-    //     print('Invalid input string');
-    // }
+    try {
+      balance = double.parse(ammount);
+    } catch (e) {
+        print('Invalid input string');
+    }
 
     // var number = double.parse(ammount);
 
-    await _databaseService.updateAccount(id, name, descript);
+    await _databaseService.updateTransact(id, name, descript, balance, accountID);
 
     Navigator.pop(context, "refresh");
   }
@@ -172,7 +172,7 @@ class NewTransactionState extends State<NewTransaction> {
     // Build a Form widget using the _formKey created above.
     return Scaffold(
       appBar: AppBar(
-        title: _newMode ? const Text('New Account Data') : const Text('Update Account Data'),
+        title: _newMode ? const Text('New Transaction Data') : const Text('Update Transaction Data'),
         automaticallyImplyLeading: false,
       ),
       
@@ -194,7 +194,7 @@ class NewTransactionState extends State<NewTransaction> {
                 controller: _nameText,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: 'Account Name',
+                  labelText: 'Transaction Name',
                   counterText: "",
                 ),
               ),
@@ -210,7 +210,7 @@ class NewTransactionState extends State<NewTransaction> {
                 controller: _descText,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: 'Account Description',
+                  labelText: 'Transaction Description',
                   counterText: "",
                 ),
               ),
@@ -281,15 +281,15 @@ class NewTransactionState extends State<NewTransaction> {
                 }
 
                 // ignore: avoid_print
-                print("Add account ${name} - ${ammount}");
+                print("Add Transaction ${name} - ${ammount}");
 
                 if(_newMode) {
-                  _onSave();
+                  _newSave();
                 } else {
                   _editSave();
                 }
               },
-              child: _newMode ? const Text('Create Account') : const Text('Update Account'),
+              child: _newMode ? const Text('Create Transaction') : const Text('Update Transaction'),
             )
           ],
         ),

@@ -133,23 +133,24 @@ class _TransactionViewState extends State<TransactionView> {
                     total: ammount,        // Pass the count
                     openEditAccount: () async {
                       print("Clicked Edit Account $accountName");
-                      // Push to another page and wait for the result
-                      // final result = await Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => NewAccount(
-                      //     name: accountName,
-                      //     description: description,
-                      //     total: "$ammount",
-                      //     id: itemId,
-                      //     )),
-                      // );
+                      //Push to another page and wait for the result
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NewTransaction(
+                          name: accountName,
+                          description: description,
+                          total: "$ammount",
+                          id: itemId,
+                          tableName: accountName,
+                          )),
+                      );
 
-                      // // Refresh the list after returning from the second page if needed
-                      // if (result == 'refresh') {
-                      //   setState(() {
-                      //     _fetchItems();
-                      //   });
-                      // }
+                      // Refresh the list after returning from the second page if needed
+                      if (result == 'refresh') {
+                        setState(() {
+                          _fetchItems();
+                        });
+                      }
                     },
                     openTransactions: () {
 
