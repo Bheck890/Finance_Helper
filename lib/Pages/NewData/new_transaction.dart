@@ -49,8 +49,6 @@ class NewTransaction extends StatefulWidget {
     required this.id,
     required this.tableName
   });
-  
-  //const NewAccount({super.key});
 
   @override
   NewTransactionState createState() {
@@ -133,9 +131,7 @@ class NewTransactionState extends State<NewTransaction> {
     } catch (e) {
         print('Invalid input string');
     }
-
-    // var number = double.parse(ammount);
-
+    
     await _databaseService.updateTransact(id, name, descript, balance, accountID);
 
     Navigator.pop(context, "refresh");

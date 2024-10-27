@@ -48,10 +48,10 @@ class _TransactionViewState extends State<TransactionView> {
     required this.accountID,
   });
 
-
   final DatabaseService _databaseService = DatabaseService();
+  //late ScrollController _scrollController;
+  late Future<List<Map<String, dynamic>>> _items;//= List.generate(20, (index) => 'Item $index');;
 
-  late Future<List<Map<String, dynamic>>> _items;
   Map<int, int> accountElements = {};
 
   void _OpenAccount() {
@@ -63,7 +63,20 @@ class _TransactionViewState extends State<TransactionView> {
   @override
   void initState() {
     super.initState();
+
     _fetchItems();
+    // _scrollController = ScrollController();
+    // // Setting the scroll to start from the top
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    // });
+
+  }
+
+  @override
+  void dispose() {
+    //_scrollController.dispose();
+    super.dispose();
   }
 
   Future<List<Map<String, dynamic>>> getItems(Database db) async {
@@ -105,7 +118,9 @@ class _TransactionViewState extends State<TransactionView> {
           } else {
             final items = snapshot.data!;
             return ListView.builder(
+              //controller: _scrollController,
               itemCount: items.length,
+              reverse: true,
               itemBuilder: (context, index) {
                 final item = items[index];
                 int itemId = item['id'];
