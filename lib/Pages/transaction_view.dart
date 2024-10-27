@@ -6,12 +6,12 @@ import 'package:sqflite/sqflite.dart';
 import 'package:flutter/material.dart';
 
 class TransactionView extends StatefulWidget {
-  final String accountName;
+  final String accountNameID;
   final int accountID;
 
   const TransactionView({
     super.key,
-    required this.accountName,
+    required this.accountNameID,
     required this.accountID,
   });
   
@@ -35,16 +35,16 @@ class TransactionView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _TransactionViewState(
     accountID: accountID,
-    accountName: accountName,
+    accountNameID: accountNameID,
   );
 }
 
 class _TransactionViewState extends State<TransactionView> {
-  final String accountName;
+  final String accountNameID;
   final int accountID;
 
   _TransactionViewState({
-    required this.accountName,
+    required this.accountNameID,
     required this.accountID,
   });
 
@@ -52,7 +52,7 @@ class _TransactionViewState extends State<TransactionView> {
   final DatabaseService _databaseService = DatabaseService();
 
   late Future<List<Map<String, dynamic>>> _items;
-  Map<int, int> accountElements = {};  // Track counts for each item
+  Map<int, int> accountElements = {};
 
   void _OpenAccount() {
     setState(() {
@@ -67,11 +67,11 @@ class _TransactionViewState extends State<TransactionView> {
   }
 
   Future<List<Map<String, dynamic>>> getItems(Database db) async {
-    return await db.query(accountName);
+    return await db.query(accountNameID);
   }
 
   void _fetchItems() {
-    _items = _databaseService.transactData(accountName);
+    _items = _databaseService.transactData(accountNameID);
     // ignore: avoid_print
     print('Fetching items...'); // Debugging
   }
@@ -141,7 +141,7 @@ class _TransactionViewState extends State<TransactionView> {
                           description: description,
                           total: "$ammount",
                           id: itemId,
-                          tableName: accountName,
+                          tableName: accountNameID,
                           )),
                       );
 
@@ -185,7 +185,7 @@ class _TransactionViewState extends State<TransactionView> {
               description: "",
               total: "",
               id: 0,
-              tableName: accountName
+              tableName: accountNameID
               )),
           );
 
@@ -208,7 +208,7 @@ class _TransactionViewState extends State<TransactionView> {
   
   // Function to delete an item from the database
   void _deleteItem(int id) async {
-    await _databaseService.deleteTransaction(accountName, id);  // Make sure you have a deleteItem method
+    await _databaseService.deleteTransaction(accountNameID, id);  // Make sure you have a deleteItem method
     setState(() {
       _fetchItems();  // Refresh the item list after deletion
     });

@@ -117,8 +117,7 @@ class NewTransactionState extends State<NewTransaction> {
 
     await _databaseService
         .insertTransact(
-          Transact(name: transactName, description: transactDescript, ammount: balance), table: accountID
-          );
+          Transact(name: transactName, description: transactDescript, ammount: balance), table: accountID);
 
     Navigator.pop(context, "refresh");
   }
@@ -126,7 +125,6 @@ class NewTransactionState extends State<NewTransaction> {
   Future<void> _editSave() async {
     final name = _nameText.text;
     final descript = _descText.text;
-
     final ammount = _ammountText.text;
     double balance = 0.0;
     
@@ -163,7 +161,7 @@ class NewTransactionState extends State<NewTransaction> {
   @override
   Widget build(BuildContext context) {
 
-    final bool _newMode = name.isEmpty;
+    final bool newMode = name.isEmpty;
 
     _nameText.text = name;
     _ammountText.text = total;
@@ -172,7 +170,7 @@ class NewTransactionState extends State<NewTransaction> {
     // Build a Form widget using the _formKey created above.
     return Scaffold(
       appBar: AppBar(
-        title: _newMode ? const Text('New Transaction Data') : const Text('Update Transaction Data'),
+        title: newMode ? const Text('New Transaction Data') : const Text('Update Transaction Data'),
         automaticallyImplyLeading: false,
       ),
       
@@ -220,7 +218,6 @@ class NewTransactionState extends State<NewTransaction> {
             // The second text field is focused on when a user taps the
             // FloatingActionButton.
             
-            _newMode ? 
             SizedBox(
               width: 200,
               height: 50,
@@ -236,7 +233,7 @@ class NewTransactionState extends State<NewTransaction> {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: 'Starting Ammount',
+                  labelText: 'Transaction Ammount',
                   prefix: Text(
                     "\$",
                     textAlign: TextAlign.right,
@@ -248,11 +245,6 @@ class NewTransactionState extends State<NewTransaction> {
                 focusNode: myFocusNode,
 
               ),
-            )
-            :
-            const SizedBox(
-              width: 200,
-              height: 50,
             ),
 
             const SizedBox(
@@ -283,13 +275,13 @@ class NewTransactionState extends State<NewTransaction> {
                 // ignore: avoid_print
                 print("Add Transaction ${name} - ${ammount}");
 
-                if(_newMode) {
+                if(newMode) {
                   _newSave();
                 } else {
                   _editSave();
                 }
               },
-              child: _newMode ? const Text('Create Transaction') : const Text('Update Transaction'),
+              child: newMode ? const Text('Create Transaction') : const Text('Update Transaction'),
             )
           ],
         ),

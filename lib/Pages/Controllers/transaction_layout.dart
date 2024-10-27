@@ -62,7 +62,7 @@ class _TransactionsNavigationState extends State<TransactionsNavigation> {
       body: <Widget>[
         /// Account page
         TransactionView(
-          accountName: accountName,
+          accountNameID: accountName,
           accountID: accountId,
         ),
 
