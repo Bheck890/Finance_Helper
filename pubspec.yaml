@@ -40,6 +40,8 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   sqflite_common_ffi: ^2.3.3
   sqlite3_flutter_libs: ^0.5.24
+  animated_list_plus: ^0.5.2
+  wtf_sliding_sheet: ^1.1.3
   
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,9 @@
 // ignore_for_file: non_constant_identifier_names, unused_element
+import 'package:animated_list_plus/animated_list_plus.dart';
+import 'package:animated_list_plus/transitions.dart';
 import 'package:finance_helper/Pages/NewData/new_transaction.dart';
 import 'package:finance_helper/common_widgets/transaction_card.dart';
+import 'package:finance_helper/models/transaction.dart';
 import 'package:finance_helper/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/material.dart';
@@ -117,74 +120,104 @@ class _TransactionViewState extends State<TransactionView> {
             return const Center(child: Text('No items found'));
           } else {
             final items = snapshot.data!;
-            return ListView.builder(
-              //controller: _scrollController,
-              itemCount: items.length,
-              reverse: true,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                int itemId = item['id'];
-                String accountName = item['name'];
-                String description = item['description'];
-                double ammount = item['ammount'];
-                int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
-                
-                // Use the Dismissible widget to wrap the ItemCard
-                return Dismissible(
-                  key: Key(itemId.toString()),  // A unique key for each item
-                  direction: DismissDirection.endToStart,  // Swipe to the left to delete
-                  background: Container(
-                    color: Colors.red,
-                    alignment: Alignment.centerRight,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Icon(Icons.delete, color: Colors.white),
-                  ),
-                  onDismissed: (direction) {
-                    _deleteItem(itemId);  // Call the delete function when swiped
-                  },
-                  child: TransactCard(
-                    name: accountName,  // Pass the item name
-                    description: description,
-                    total: ammount,        // Pass the count
-                    openEditAccount: () async {
-                      print("Clicked Edit Account $accountName");
-                      //Push to another page and wait for the result
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => NewTransaction(
-                          name: accountName,
-                          description: description,
-                          total: "$ammount",
-                          id: itemId,
-                          tableName: accountNameID,
-                          )),
-                      );
-
-                      // Refresh the list after returning from the second page if needed
-                      if (result == 'refresh') {
-                        setState(() {
-                          _fetchItems();
-                        });
-                      }
-                    },
-                    openTransactions: () {
-
-                      print("Opened Transacction Page $itemId");
-                      
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => TransactionsNavigation(
-                      //     name: accountName,
-                      //     id: itemId,
-                      //     )),
-                      // );                      
-                    },
-                  )
-               );
-                // Use the new ItemCard widget
-                
+            // Specify the generic type of the data in the list.
+            return ImplicitlyAnimatedList<Map<String, dynamic>>(
+              // The current items in the list.
+              items: items,
+              // Called by the DiffUtil to decide whether two object represent the same item.
+              // For example, if your items have unique ids, this method should check their id equality.
+              areItemsTheSame: (a, b) => a['id'] == b['id'],
+              // Called, as needed, to build list item widgets.
+              // List items are only built when they're scrolled into view.
+              itemBuilder: (context, animation, item, index) {
+                // Specifiy a transition to be used by the ImplicitlyAnimatedList.
+                // See the Transitions section on how to import this transition.
+                return SizeFadeTransition(
+                  sizeFraction: 0.7,
+                  curve: Curves.easeInOut,
+                  animation: animation,
+                  child: Text(item['name']),
+                );
+              },
+              // An optional builder when an item was removed from the list.
+              // If not specified, the List uses the itemBuilder with
+              // the animation reversed.
+              removeItemBuilder: (context, animation, oldItem) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: Text(oldItem['name']),
+                );
               },
             );
+
+            // return ListView.builder(
+            //   //controller: _scrollController,
+            //   itemCount: items.length,
+            //   reverse: true,
+            //   itemBuilder: (context, index) {
+            //     final item = items[index];
+            //     int itemId = item['id'];
+            //     String accountName = item['name'];
+            //     String description = item['description'];
+            //     double ammount = item['ammount'];
+            //     int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
+                
+            //     // Use the Dismissible widget to wrap the ItemCard
+            //     return Dismissible(
+            //       key: Key(itemId.toString()),  // A unique key for each item
+            //       direction: DismissDirection.endToStart,  // Swipe to the left to delete
+            //       background: Container(
+            //         color: Colors.red,
+            //         alignment: Alignment.centerRight,
+            //         padding: EdgeInsets.symmetric(horizontal: 20),
+            //         child: Icon(Icons.delete, color: Colors.white),
+            //       ),
+            //       onDismissed: (direction) {
+            //         _deleteItem(itemId);  // Call the delete function when swiped
+            //       },
+            //       child: TransactCard(
+            //         name: accountName,  // Pass the item name
+            //         description: description,
+            //         total: ammount,        // Pass the count
+            //         openEditAccount: () async {
+            //           print("Clicked Edit Account $accountName");
+            //           //Push to another page and wait for the result
+            //           final result = await Navigator.push(
+            //             context,
+            //             MaterialPageRoute(builder: (context) => NewTransaction(
+            //               name: accountName,
+            //               description: description,
+            //               total: "$ammount",
+            //               id: itemId,
+            //               tableName: accountNameID,
+            //               )),
+            //           );
+
+            //           // Refresh the list after returning from the second page if needed
+            //           if (result == 'refresh') {
+            //             setState(() {
+            //               _fetchItems();
+            //             });
+            //           }
+            //         },
+            //         openTransactions: () {
+
+            //           print("Opened Transacction Page $itemId");
+                      
+            //           // Navigator.push(
+            //           //   context,
+            //           //   MaterialPageRoute(builder: (context) => TransactionsNavigation(
+            //           //     name: accountName,
+            //           //     id: itemId,
+            //           //     )),
+            //           // );                      
+            //         },
+            //       )
+            //    );
+            //     // Use the new ItemCard widget
+                
+            //   },
+            // );
           }
         },
       ),
