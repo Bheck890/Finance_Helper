@@ -80,7 +80,7 @@ class DatabaseService {
 
     //Creates Table with name of User made Account
     await db.execute(
-      'CREATE TABLE ${accnt.tableID} (id INTEGER PRIMARY KEY, name TEXT, description TEXT, ammount DOUBLE)',
+      'CREATE TABLE ${accnt.tableID} (id INTEGER PRIMARY KEY, name TEXT, description TEXT, ammount DOUBLE, sec INTEGER, min INTEGER, hour INTEGER, day INTEGER, month INTEGER, year INTEGER)',
     );
 
     //Adds Account to a main Data Table

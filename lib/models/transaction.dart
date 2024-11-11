@@ -5,12 +5,24 @@ class Transact {
   final String name;
   final String description;
   final double ammount;
+  final int sec;
+  final int min;
+  final int hour;
+  final int day;
+  final int month;
+  final int year;
 
   Transact({
     this.id,
     required this.name,
     required this.description,
     required this.ammount,
+    required this.sec,
+    required this.min,
+    required this.hour,
+    required this.day,
+    required this.month,
+    required this.year,
   });
 
   // Convert a Breed into a Map. The keys must correspond to the names of the
@@ -21,6 +33,12 @@ class Transact {
       'name': name,
       'description': description,
       'ammount': ammount,
+      'sec' : sec,
+      'min': min,
+      'hour': hour,
+      'day': day,
+      'month': month,
+      'year': year,
     };
   }
 
@@ -30,6 +48,12 @@ class Transact {
       name: map['name'] ?? '',
       description: map['description'] ?? '',
       ammount: map['ammount'] ?? '',
+      sec: map['sec'] ?? '',
+      min: map['min'] ?? '',
+      hour: map['hour'] ?? '',
+      day: map['day'] ?? '',
+      month: map['month'] ?? '',
+      year: map['year'] ?? '',
     );
   }
 
@@ -40,5 +64,5 @@ class Transact {
   // Implement toString to make it easier to see information about
   // each breed when using the print statement.
   @override
-  String toString() => 'Transaction(id: $id, name: $name, description: $description, ammoutn $ammount)';
+  String toString() => 'Transaction(id: $id, name: $name, description: $description, ammount $ammount, sec $sec, min $min, hour $hour, day $day, month $month, year $year)';
 }

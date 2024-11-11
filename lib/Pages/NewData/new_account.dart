@@ -122,12 +122,16 @@ class NewAccountState extends State<NewAccount> {
         print('Invalid input string');
     }
 
+
+    final DateTime now = DateTime.now();
+
     var number = double.parse(ammount);
 
     await _databaseService
         .insertAccount(
           Account(name: name, tableID: hex, description: descript, ammount: number), 
-          Transact(name: "First Balance", description: "First Transaction", ammount: balance)
+          Transact(name: "First Balance", description: "First Transaction", ammount: balance,
+            sec: now.second, min: now.minute, hour: now.hour, day: now.day, month: now.month, year: now.year)
           );
 
     Navigator.pop(context, "refresh");

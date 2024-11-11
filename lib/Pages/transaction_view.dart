@@ -130,14 +130,61 @@ class _TransactionViewState extends State<TransactionView> {
               // Called, as needed, to build list item widgets.
               // List items are only built when they're scrolled into view.
               itemBuilder: (context, animation, item, index) {
+                final Map<String, dynamic> item = items[index];
+                int itemId = item['id'];
+                String accountName = item['name'];
+                String description = item['description'];
+                double ammount = item['ammount'];
+                //int count = accountElements[itemId] ?? 0;
+                
                 // Specifiy a transition to be used by the ImplicitlyAnimatedList.
                 // See the Transitions section on how to import this transition.
                 return SizeFadeTransition(
                   sizeFraction: 0.7,
                   curve: Curves.easeInOut,
                   animation: animation,
-                  child: Text(item['name']),
+                  child: TransactCard(
+                    name: accountName,  // Pass the item name
+                    description: description,
+                    total: ammount,        // Pass the count
+                    openEditAccount: () async {
+                      print("Clicked Edit Account $accountName");
+                      //Push to another page and wait for the result
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NewTransaction(
+                          name: accountName,
+                          description: description,
+                          total: "$ammount",
+                          id: itemId,
+                          tableName: accountNameID,
+                          )),
+                      );
+
+                      // Refresh the list after returning from the second page if needed
+                      if (result == 'refresh') {
+                        setState(() {
+                          _fetchItems();
+                        });
+                      }
+                    },
+                    openTransactions: () {
+
+                      print("Opened Transacction Page $itemId");
+                      
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => TransactionsNavigation(
+                      //     name: accountName,
+                      //     id: itemId,
+                      //     )),
+                      // );                      
+                    },
+                  )
+                  
+                  //Text(item['name']),
                 );
+                
               },
               // An optional builder when an item was removed from the list.
               // If not specified, the List uses the itemBuilder with

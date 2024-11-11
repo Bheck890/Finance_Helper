@@ -99,7 +99,7 @@ class NewTransactionState extends State<NewTransaction> {
   late FocusNode myFocusNode;
 
 
-  Future<void> _newSave() async {
+  Future<void> _newTransact() async {
     final transactName = _nameText.text;
     final transactDescript = _descText.text;
     final ammount = _ammountText.text;
@@ -110,17 +110,20 @@ class NewTransactionState extends State<NewTransaction> {
     } catch (e) {
         print('Invalid input string');
     }
+    
+    final DateTime now = DateTime.now();
 
     //var number = double.parse(ammount);
 
     await _databaseService
         .insertTransact(
-          Transact(name: transactName, description: transactDescript, ammount: balance), table: accountID);
+          Transact(name: transactName, description: transactDescript, ammount: balance,
+          sec: now.second, min: now.minute, hour: now.hour, day: now.day, month: now.month, year: now.year), table: accountID);
 
     Navigator.pop(context, "refresh");
   }
 
-  Future<void> _editSave() async {
+  Future<void> _editTransact() async {
     final name = _nameText.text;
     final descript = _descText.text;
     final ammount = _ammountText.text;
@@ -272,9 +275,9 @@ class NewTransactionState extends State<NewTransaction> {
                 print("Add Transaction ${name} - ${ammount}");
 
                 if(newMode) {
-                  _newSave();
+                  _newTransact();
                 } else {
-                  _editSave();
+                  _editTransact();
                 }
               },
               child: newMode ? const Text('Create Transaction') : const Text('Update Transaction'),
