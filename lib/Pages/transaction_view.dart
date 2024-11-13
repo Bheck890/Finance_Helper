@@ -88,6 +88,7 @@ class _TransactionViewState extends State<TransactionView> {
 
   void _fetchItems() {
     _items = _databaseService.transactData(accountNameID);
+
     // ignore: avoid_print
     print('Fetching items...'); // Debugging
   }
@@ -119,18 +120,46 @@ class _TransactionViewState extends State<TransactionView> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No items found'));
           } else {
-            final items = snapshot.data!;
+            //final items = snapshot.data!;
+
+            // Make a copy of the data to sort
+            List<Map<String, dynamic>> transact = List<Map<String, dynamic>>.from(snapshot.data!);
+            transact.sort((a, b) {
+              DateTime dateA = DateTime(
+                a['year'],
+                a['month'],
+                a['day'],
+                a['hour'],
+                a['min'],
+                a['sec'],
+              );
+
+              DateTime dateB = DateTime(
+                b['year'],
+                b['month'],
+                b['day'],
+                b['hour'],
+                b['min'],
+                b['sec'],
+              );
+
+              return dateB.compareTo(dateA); // Ascending order
+            });
+
+
             // Specify the generic type of the data in the list.
             return ImplicitlyAnimatedList<Map<String, dynamic>>(
+
               // The current items in the list.
-              items: items,
+              items: transact,
               // Called by the DiffUtil to decide whether two object represent the same item.
               // For example, if your items have unique ids, this method should check their id equality.
               areItemsTheSame: (a, b) => a['id'] == b['id'],
               // Called, as needed, to build list item widgets.
               // List items are only built when they're scrolled into view.
               itemBuilder: (context, animation, item, index) {
-                final Map<String, dynamic> item = items[index];
+                final Map<String, dynamic> item = transact[index];
+
                 int itemId = item['id'];
                 String accountName = item['name'];
                 String description = item['description'];
@@ -311,3 +340,9 @@ class _TransactionViewState extends State<TransactionView> {
 
   
 }
+
+// extension on Future<List<Map<String, dynamic>>> {
+//   void sort(int Function(dynamic a, dynamic b) param0) {
+
+//   }
+// }
