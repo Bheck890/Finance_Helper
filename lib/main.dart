@@ -39,7 +39,7 @@ class _FinanceNavigationState extends State<FinanceNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
+    //final ThemeData theme = Theme.of(context);
     
     return Scaffold(
       bottomNavigationBar: NavigationBar(

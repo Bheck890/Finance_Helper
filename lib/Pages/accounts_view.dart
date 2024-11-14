@@ -97,7 +97,7 @@ class _AccountsViewState extends State<AccountsView> {
                 String description = item['description'];
                 double ammount = item['ammount'];
                 String accountID = item['tableID'];
-                int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
+                //int count = accountElements[itemId] ?? 0;  // Use a map to track counts for each item
                 
                 // Use the Dismissible widget to wrap the ItemCard
                 return Dismissible(

@@ -1,6 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'package:finance_helper/models/account.dart';
 import 'package:finance_helper/models/transaction.dart';
 import 'package:finance_helper/services/database_service.dart';
 import 'package:flutter/material.dart';

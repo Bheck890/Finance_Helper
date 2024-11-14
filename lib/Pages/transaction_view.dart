@@ -3,7 +3,6 @@ import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
 import 'package:finance_helper/Pages/NewData/new_transaction.dart';
 import 'package:finance_helper/common_widgets/transaction_card.dart';
-import 'package:finance_helper/models/transaction.dart';
 import 'package:finance_helper/services/database_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/material.dart';
